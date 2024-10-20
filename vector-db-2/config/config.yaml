@@ -1,0 +1,45 @@
+vector_db:
+  interface: "core.interfaces.VectorDBInterface"
+  implementation: "db_adapters.milvus_adapter.MilvusAdapter"
+  params:
+    uri: "file://./main.db"
+    # Credentials for database server
+    # token: "username:password"
+    collection_name: "your_collection_name"
+    vector_dim: 768
+
+text_embedding_model:
+  interface: "core.interfaces.EmbeddingModelInterface"
+  implementation: "embedding_models.sentence_transformer_embedding.SentenceTransformerEmbedding"
+  params:
+    model_name: "all-MiniLM-L6-v2"
+
+image_embedding_model:
+  interface: "core.interfaces.EmbeddingModelInterface"
+  implementation: "embedding_models.resnet_image_embedding.ResNetImageEmbedding"
+  params:
+    model_name: resnet50
+    use_cuda: false
+
+file_processors:
+  txt:
+    interface: "core.interfaces.FileProcessorInterface"
+    implementation: "file_processors.text_processor.TextProcessor"
+    params: {}
+  pdf:
+    interface: "core.interfaces.FileProcessorInterface"
+    implementation: "file_processors.pdf_processor.PDFProcessor"
+    params: {}
+  zip:
+    interface: "core.interfaces.FileProcessorInterface"
+    implementation: "file_processors.zip_processor.ZipProcessor"
+    params: {}
+  rar:
+    interface: "core.interfaces.FileProcessorInterface"
+    implementation: "file_processors.rar_processor.RarProcessor"
+    params: {}
+
+api:
+  interface: "core.interfaces.APIInterface"
+  implementation: "api.fastapi_app.FastAPIApp"
+  params: {}

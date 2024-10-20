@@ -12,7 +12,7 @@ class VectorService:
         self.image_embedding_model = image_embedding_model
         self.file_processors = file_processors
     
-    def process_and_store(self, file_content: bytes, file_name: str) -> List[str]:
+    def process_and_store(self, file_content: bytes, file_name: str) -> Dict[str, Any]:
         file_extension = file_name.split('.')[-1].lower()
         
         if file_extension not in self.file_processors:

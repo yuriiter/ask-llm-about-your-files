@@ -1,6 +1,5 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from pydantic import BaseModel
-from typing import List
 from core.interfaces import APIInterface
 from core.vector_service import VectorService
 
@@ -16,11 +15,9 @@ class FastAPIApp(APIInterface):
         @self.app.post("/upload")
         async def upload_file(file: UploadFile = File(...)):
             try:
-                if file == None:
-                    raise HTTPException(status_code=400)
                 contents = await file.read()
-                ids = self.vector_service.process_and_store(contents, file.filename)
-                return {"message": "File processed successfully", "ids": ids}
+                result = self.vector_service.process_and_store(contents, file.filename or "Unknown")
+                return {"message": "File processed successfully", "result": result}
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))
 

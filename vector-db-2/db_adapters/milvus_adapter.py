@@ -2,6 +2,7 @@ from typing import List, Dict, Any, Optional
 import os
 from pymilvus import MilvusClient, FieldSchema, CollectionSchema, DataType
 from core.interfaces import VectorDBInterface
+from uuid import uuid4
 
 class MilvusAdapter(VectorDBInterface):
     def __init__(self, uri: str, collection_name: str, fields: list, vector_dim: int = 768, token: Optional[str] = None):
@@ -63,13 +64,14 @@ class MilvusAdapter(VectorDBInterface):
         )
         print(f"Collection '{self.collection_name}' created successfully.")
 
-    def insert(self, vectors: List[List[float]], metadata: List[Dict[str, Any]]) -> List[str]:
+    def insert(self, vectors: List[List[float]], metadata: List[Dict[str, Any]]):
         data = [
-            {"vector": vector, "text": meta.get('text', ''), "file_id": meta.get('file_id', '')}
+            {"id": str(uuid4()), "vector": vector, "text": meta.get('text', ''), "file_id": meta.get('file_id', '')}
             for vector, meta in zip(vectors, metadata)
         ]
         result = self.client.insert(self.collection_name, data)
-        return list(result.get('ids', []))
+
+        return {"insert_count": result.get('insert_count', 0), "file_id": metadata[0].get('file_id', '')}
 
     def search(self, query_vector: List[float], top_k: int) -> List[Dict[str, Any]]:
         result = self.client.search(

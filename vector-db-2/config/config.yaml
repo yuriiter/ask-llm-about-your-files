@@ -9,16 +9,15 @@ vector_db:
     vector_dim: 768
     fields:
       - name: "id"
-        dtype: "INT64"
+        dtype: "VARCHAR"
+        max_length: 36
         is_primary: true
-        auto_increment: true
-        audo_id: true
       - name: "vector"
         dtype: "FLOAT_VECTOR"
         dim: 768
       - name: "file_id"
         dtype: "VARCHAR"
-        max_length: 255
+        max_length: 36
 
 text_embedding_model:
   interface: "core.interfaces.EmbeddingModelInterface"

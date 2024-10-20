@@ -16,8 +16,10 @@ class FastAPIApp(APIInterface):
         @self.app.post("/upload")
         async def upload_file(file: UploadFile = File(...)):
             try:
+                if file == None:
+                    raise HTTPException(status_code=400)
                 contents = await file.read()
-                ids = self.vector_service.process_and_store(contents)
+                ids = self.vector_service.process_and_store(contents, file.filename)
                 return {"message": "File processed successfully", "ids": ids}
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))

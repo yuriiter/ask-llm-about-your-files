@@ -1,16 +1,17 @@
 from typing import List, Dict, Any, Optional
 import os
-from pymilvus import MilvusClient
+from pymilvus import MilvusClient, FieldSchema, CollectionSchema, DataType
 from core.interfaces import VectorDBInterface
 
 class MilvusAdapter(VectorDBInterface):
-    def __init__(self, uri: str, collection_name: str, vector_dim: int = 768, token: Optional[str] = None):
+    def __init__(self, uri: str, collection_name: str, fields: list, vector_dim: int = 768, token: Optional[str] = None):
         self.uri = uri
         self.collection_name = collection_name
         self.vector_dim = vector_dim
+        self.fields = fields
+        self.token = token
         self._connect()
         self._ensure_collection_exists()
-        self.token = token
 
     def _connect(self):
         if self.uri.startswith("file://"):
@@ -28,11 +29,37 @@ class MilvusAdapter(VectorDBInterface):
             self._create_collection()
 
     def _create_collection(self):
+        fields = []
+
+        for field_config in self.fields:
+            dtype = getattr(DataType, field_config['dtype'])
+            field_params = {
+                'name': field_config['name'],
+                'dtype': dtype,
+                'is_primary': field_config.get('is_primary', False),
+                'auto_increment': field_config.get('auto_increment', False),
+                'description': field_config.get('description', '')
+            }
+
+            dim = field_config.get('dim', None)
+            max_length = field_config.get('max_length', None)
+            audo_id = field_config.get('audo_id', None)
+
+            if dim:
+                field_params['dim'] = dim
+            if max_length:
+                field_params['max_length'] = max_length
+            if audo_id:
+                field_params['audo_id'] = audo_id
+
+            field_schema = FieldSchema(**field_params)
+            fields.append(field_schema)
+
+        schema = CollectionSchema(fields=fields, enable_dynamic_field=True, audo_id=True)
+
         self.client.create_collection(
             collection_name=self.collection_name,
-            dimension=self.vector_dim,
-            primary_field_name="id",
-            vector_field_name="vector"
+            schema=schema
         )
         print(f"Collection '{self.collection_name}' created successfully.")
 
@@ -42,7 +69,7 @@ class MilvusAdapter(VectorDBInterface):
             for vector, meta in zip(vectors, metadata)
         ]
         result = self.client.insert(self.collection_name, data)
-        return result.primary_keys
+        return list(result.get('ids', []))
 
     def search(self, query_vector: List[float], top_k: int) -> List[Dict[str, Any]]:
         result = self.client.search(

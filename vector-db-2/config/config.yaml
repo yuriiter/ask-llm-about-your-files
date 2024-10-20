@@ -7,12 +7,25 @@ vector_db:
     # token: "username:password"
     collection_name: "your_collection_name"
     vector_dim: 768
+    fields:
+      - name: "id"
+        dtype: "INT64"
+        is_primary: true
+        auto_increment: true
+        audo_id: true
+      - name: "vector"
+        dtype: "FLOAT_VECTOR"
+        dim: 768
+      - name: "file_id"
+        dtype: "VARCHAR"
+        max_length: 255
 
 text_embedding_model:
   interface: "core.interfaces.EmbeddingModelInterface"
   implementation: "embedding_models.sentence_transformer_embedding.SentenceTransformerEmbedding"
   params:
     model_name: "all-MiniLM-L6-v2"
+    output_dim: 768
 
 image_embedding_model:
   interface: "core.interfaces.EmbeddingModelInterface"
@@ -20,6 +33,7 @@ image_embedding_model:
   params:
     model_name: resnet50
     use_cuda: false
+    output_dim: 768
 
 file_processors:
   txt:

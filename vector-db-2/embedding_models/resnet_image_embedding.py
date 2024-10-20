@@ -3,10 +3,11 @@ import torch
 from torchvision import models, transforms
 from PIL import Image
 import io
+import numpy as np
 from core.interfaces import EmbeddingModelInterface
 
 class ResNetImageEmbedding(EmbeddingModelInterface):
-    def __init__(self, model_name: str = 'resnet50', use_cuda: bool = False):
+    def __init__(self, model_name: str = 'resnet50', use_cuda: bool = False, output_dim: int = 2048):
         self.device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")
         self.model = getattr(models, model_name)(weights=True)
         self.model = self.model.to(self.device)
@@ -18,6 +19,8 @@ class ResNetImageEmbedding(EmbeddingModelInterface):
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
+        
+        self.output_dim = output_dim
 
     def embed(self, content: Union[str, bytes]) -> List[float]:
         if isinstance(content, str):
@@ -33,4 +36,10 @@ class ResNetImageEmbedding(EmbeddingModelInterface):
         with torch.no_grad():
             features = self.model(input_batch)
 
-        return features.squeeze().cpu().numpy().tolist()
+        features = features.squeeze().cpu().numpy()
+        if features.shape[0] < self.output_dim:
+            features = np.pad(features, (0, self.output_dim - features.shape[0]), 'constant')
+        elif features.shape[0] > self.output_dim:
+            features = features[:self.output_dim]
+
+        return features.tolist()

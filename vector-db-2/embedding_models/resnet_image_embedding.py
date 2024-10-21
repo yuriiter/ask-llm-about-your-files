@@ -4,6 +4,8 @@ from torchvision import models, transforms
 from PIL import Image
 import io
 import numpy as np
+import base64
+import binascii
 from core.interfaces import EmbeddingModelInterface
 
 class ResNetImageEmbedding(EmbeddingModelInterface):
@@ -24,11 +26,15 @@ class ResNetImageEmbedding(EmbeddingModelInterface):
 
     def embed(self, content: Union[str, bytes]) -> List[float]:
         if isinstance(content, str):
-            image = Image.open(content).convert('RGB')
+            try:
+                content_bytes = base64.b64decode(content)
+                image = Image.open(io.BytesIO(content_bytes)).convert('RGB')
+            except (ValueError, binascii.Error):
+                image = Image.open(content).convert('RGB')
         elif isinstance(content, bytes):
             image = Image.open(io.BytesIO(content)).convert('RGB')
         else:
-            raise ValueError("Invalid input type. Expected str (file path) or bytes (image data).")
+            raise ValueError("Invalid input type. Expected str (file path or base64) or bytes (image data).")
 
         input_tensor = self.preprocess(image)
         input_batch = input_tensor.unsqueeze(0).to(self.device)

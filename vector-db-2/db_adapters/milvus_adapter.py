@@ -3,6 +3,7 @@ import os
 from pymilvus import MilvusClient, FieldSchema, CollectionSchema, DataType
 from core.interfaces import VectorDBInterface
 from uuid import uuid4
+from collections import defaultdict
 
 class MilvusAdapter(VectorDBInterface):
     def __init__(self, uri: str, collection_name: str, fields: list, vector_dim: int = 768, token: Optional[str] = None):
@@ -66,12 +67,12 @@ class MilvusAdapter(VectorDBInterface):
 
     def insert(self, vectors: List[List[float]], metadata: List[Dict[str, Any]]):
         data = [
-            {"id": str(uuid4()), "vector": vector, "text": meta.get('text', ''), "file_id": meta.get('file_id', '')}
+            {"id": str(uuid4()), "vector": vector, **meta }
             for vector, meta in zip(vectors, metadata)
         ]
-        result = self.client.insert(self.collection_name, data)
+        self.client.insert(self.collection_name, data)
 
-        return {"insert_count": result.get('insert_count', 0), "file_id": metadata[0].get('file_id', '')}
+        return self.summarize_uploaded_files(metadata)
 
     def search(self, query_vector: List[float], top_k: int) -> List[Dict[str, Any]]:
         result = self.client.search(
@@ -89,6 +90,25 @@ class MilvusAdapter(VectorDBInterface):
             }
             for hit in result[0]
         ]
+
+
+    def summarize_uploaded_files(self, uploaded_file_vectors):
+        file_id_to_data = {}
+        for vector in uploaded_file_vectors:
+            file_id = vector["file_id"]
+            file_name = vector["metadata"]["file_name"]
+            if file_id_to_data.get(file_id, None) == None:
+                file_id_to_data[file_id] = {"images_num": 0, "text_chunks_num": 0, "file_name": file_name}
+            
+            if vector["type"] == "text":
+                file_id_to_data[file_id]["text_chunks_num"] += 1
+            elif vector["type"] == "image":
+                file_id_to_data[file_id]["images_num"] += 1
+        
+        result = [{"file_id": file_id, **rest} for file_id, rest in file_id_to_data.items()]
+
+        return result
+
 
     def delete(self, ids: List[str]) -> bool:
         expr = f"id in {ids}"

@@ -7,7 +7,7 @@ class VectorDBInterface(ABC):
         pass
     
     @abstractmethod
-    def insert(self, vectors: List[List[float]], metadata: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def insert(self, vectors: List[List[float]], metadata: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         pass
     
     @abstractmethod

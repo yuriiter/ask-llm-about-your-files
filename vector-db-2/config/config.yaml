@@ -18,6 +18,9 @@ vector_db:
       - name: "file_id"
         dtype: "VARCHAR"
         max_length: 36
+      - name: "type"
+        dtype: "VARCHAR"
+        max_length: 20
 
 text_embedding_model:
   interface: "core.interfaces.EmbeddingModelInterface"

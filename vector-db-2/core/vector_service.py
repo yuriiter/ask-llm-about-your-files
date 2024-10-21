@@ -1,6 +1,5 @@
-from typing import List, Dict, Any, Union
+from typing import List, Dict, Any
 from .interfaces import VectorDBInterface, EmbeddingModelInterface, FileProcessorInterface
-from uuid import uuid4
 
 class VectorService:
     def __init__(self, db_adapter: VectorDBInterface, 
@@ -12,7 +11,7 @@ class VectorService:
         self.image_embedding_model = image_embedding_model
         self.file_processors = file_processors
     
-    def process_and_store(self, file_content: bytes, file_name: str) -> Dict[str, Any]:
+    def process_and_store(self, file_content: bytes, file_name: str) -> List[Dict[str, Any]]:
         file_extension = file_name.split('.')[-1].lower()
         
         if file_extension not in self.file_processors:
@@ -23,7 +22,6 @@ class VectorService:
         
         vectors = []
         metadata = []
-        file_id = str(uuid4())
         for content in processed_contents:
             if content['type'] == 'text':
                 vector = self.text_embedding_model.embed(content['content'])
@@ -32,7 +30,7 @@ class VectorService:
             else:
                 continue
             vectors.append(vector)
-            metadata.append({"text": content.get('content', ''), "file_id": file_id})
+            metadata.append(content)
         
         return self.db_adapter.insert(vectors, metadata)
     

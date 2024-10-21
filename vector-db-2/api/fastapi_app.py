@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from pydantic import BaseModel
 from core.interfaces import APIInterface
 from core.vector_service import VectorService
+import traceback
 
 class Query(BaseModel):
     text: str
@@ -19,6 +20,7 @@ class FastAPIApp(APIInterface):
                 result = self.vector_service.process_and_store(contents, file.filename or "Unknown")
                 return {"message": "File processed successfully", "result": result}
             except Exception as e:
+                print(traceback.format_exc())
                 raise HTTPException(status_code=400, detail=str(e))
 
         @self.app.post("/search")

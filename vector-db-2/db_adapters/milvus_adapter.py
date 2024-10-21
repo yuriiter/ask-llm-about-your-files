@@ -3,7 +3,6 @@ import os
 from pymilvus import MilvusClient, FieldSchema, CollectionSchema, DataType
 from core.interfaces import VectorDBInterface
 from uuid import uuid4
-from collections import defaultdict
 
 class MilvusAdapter(VectorDBInterface):
     def __init__(self, uri: str, collection_name: str, fields: list, vector_dim: int = 768, token: Optional[str] = None):
@@ -24,7 +23,7 @@ class MilvusAdapter(VectorDBInterface):
             print(f"Milvus data file: {path}")
             self.client = MilvusClient(uri=path)
         else:
-            self.client = MilvusClient(uri=self.uri, token=self.token)
+            self.client = MilvusClient(uri=self.uri, token=self.token or "")
 
     def _ensure_collection_exists(self):
         if not self.client.has_collection(self.collection_name):
@@ -65,6 +64,22 @@ class MilvusAdapter(VectorDBInterface):
         )
         print(f"Collection '{self.collection_name}' created successfully.")
 
+        self.create_index()
+
+    def create_index(self):
+        index_params = MilvusClient.prepare_index_params()
+        index_params.add_index(
+            field_name="vector",
+            metric_type="COSINE",
+            index_type="HNSW",
+            index_name="vector_index",
+            params={ "nlist": 128 }
+        )
+        self.client.create_index(
+            self.collection_name,
+            index_params=index_params
+        )
+
     def insert(self, vectors: List[List[float]], metadata: List[Dict[str, Any]]):
         data = [
             {"id": str(uuid4()), "vector": vector, **meta }
@@ -72,25 +87,31 @@ class MilvusAdapter(VectorDBInterface):
         ]
         self.client.insert(self.collection_name, data)
 
+        self.create_index()
+
         return self.summarize_uploaded_files(metadata)
 
     def search(self, query_vector: List[float], top_k: int) -> List[Dict[str, Any]]:
         result = self.client.search(
             collection_name=self.collection_name,
             data=[query_vector],
+            anns_field="vector",
+            search_params={"metric_type": "COSINE", "params": {}},
             limit=top_k,
-            output_fields=["text", "file_id"]
+            output_fields=["id", "type", "distance", "metadata", "file_id", "content"]
         )
+        print(result)
         return [
             {
-                "id": hit["id"],
+                "id": hit["entity"].get("id"),
+                "type": hit["entity"].get("type"),
                 "distance": hit["distance"],
-                "text": hit["entity"].get("text"),
-                "file_id": hit["entity"].get("file_id")
+                "content": hit["entity"].get("content"),
+                "file_id": hit["entity"].get("file_id"),
+                "metadata": hit["entity"].get("metadata"),
             }
             for hit in result[0]
         ]
-
 
     def summarize_uploaded_files(self, uploaded_file_vectors):
         file_id_to_data = {}
@@ -108,7 +129,6 @@ class MilvusAdapter(VectorDBInterface):
         result = [{"file_id": file_id, **rest} for file_id, rest in file_id_to_data.items()]
 
         return result
-
 
     def delete(self, ids: List[str]) -> bool:
         expr = f"id in {ids}"

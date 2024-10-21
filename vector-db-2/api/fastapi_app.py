@@ -29,6 +29,7 @@ class FastAPIApp(APIInterface):
                 results = self.vector_service.search(query.text, query.top_k)
                 return {"results": results}
             except Exception as e:
+                print(traceback.format_exc())
                 raise HTTPException(status_code=400, detail=str(e))
 
         @self.app.delete("/delete/{id}")
@@ -37,6 +38,7 @@ class FastAPIApp(APIInterface):
                 success = self.vector_service.delete([id])
                 return {"message": "Delete operation completed", "success": success}
             except Exception as e:
+                print(traceback.format_exc())
                 raise HTTPException(status_code=400, detail=str(e))
 
     def run(self):

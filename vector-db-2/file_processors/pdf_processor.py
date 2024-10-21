@@ -65,7 +65,7 @@ class PDFProcessor(FileProcessorInterface):
         images = []
         for page_number in range(page_count):
             il = document.get_page_images(page_number)
-            for image_idx, img in enumerate(il):
+            for image_number, img in enumerate(il):
                 xref = img[0]
                 if xref in xreflist:
                     continue
@@ -81,7 +81,7 @@ class PDFProcessor(FileProcessorInterface):
                     "content": image_data,
                     "metadata": {
                         "page_number": page_number,
-                        "image_index": image_idx,
+                        "image_number": image_number,
                         "file_name": file_name
                     }
                 })

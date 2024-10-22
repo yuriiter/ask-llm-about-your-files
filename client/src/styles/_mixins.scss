@@ -1,0 +1,84 @@
+$use-colorscheme: false;
+
+$breakpoints: (
+  null: null,
+  xxl: 1400px,
+  xl: 1200px,
+  lg: 992px,
+  md: 768px,
+  sm: 576px,
+  xs: 320px,
+);
+
+@mixin max-width($breakpoint) {
+  $value: map-get($breakpoints, $breakpoint);
+
+  @if $value !=null {
+    @media (max-width: $value) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint !=null {
+    @media (max-width: $breakpoint) {
+      @content;
+    }
+  }
+
+  @else {
+    @content;
+  }
+}
+
+@mixin min-width($breakpoint) {
+  $value: map-get($breakpoints, $breakpoint);
+
+  @if $value !=null {
+    @media (min-width: $value) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint !=null {
+    @media (min-width: $breakpoint) {
+      @content;
+    }
+  }
+
+  @else {
+    @content;
+  }
+}
+
+
+@mixin background-color($color, $second-color: null) {
+  background-color: $color;
+
+  @if $second-color ==null {
+    $second-color: invert($color);
+  }
+
+  @include dark {
+    background-color: $second-color;
+  }
+}
+
+@mixin color($color, $second-color: null) {
+  color: $color;
+
+  @if $second-color ==null {
+    $second-color: invert($color);
+  }
+
+  @include dark {
+    color: $second-color;
+  }
+}
+
+@mixin dark {
+  @if $use-colorscheme ==true {
+    &:is([data-colorscheme="dark"] *, [data-colorscheme="dark"]):not(.no-dark) {
+      @content;
+    }
+  }
+}

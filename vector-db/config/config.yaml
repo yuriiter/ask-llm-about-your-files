@@ -54,8 +54,25 @@ file_processors:
     interface: "core.interfaces.FileProcessorInterface"
     implementation: "file_processors.rar_processor.RarProcessor"
     params: {}
+  jpg:
+    interface: "core.interfaces.FileProcessorInterface"
+    implementation: "file_processors.image_processor.ImageProcessor"
+    params: {}
+  jpeg:
+    interface: "core.interfaces.FileProcessorInterface"
+    implementation: "file_processors.image_processor.ImageProcessor"
+    params: {}
+  png:
+    interface: "core.interfaces.FileProcessorInterface"
+    implementation: "file_processors.image_processor.ImageProcessor"
+    params: {}
 
 api:
+  # interface: "core.interfaces.APIInterface"
+  # implementation: "api.fastapi_app.FastAPIApp"
+  # params: {}
+
+  # GRPC API
   interface: "core.interfaces.APIInterface"
-  implementation: "api.fastapi_app.FastAPIApp"
+  implementation: "api.grpc_server.GRPCApp"
   params: {}

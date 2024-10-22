@@ -10,16 +10,16 @@ class VectorService:
         self.text_embedding_model = text_embedding_model
         self.image_embedding_model = image_embedding_model
         self.file_processors = file_processors
-    
+
     def process_and_store(self, file_content: bytes, file_name: str) -> List[Dict[str, Any]]:
         file_extension = file_name.split('.')[-1].lower()
-        
+
         if file_extension not in self.file_processors:
             raise ValueError(f"No processor found for file type: {file_extension}")
-        
+
         processor = self.file_processors[file_extension]
         processed_contents = processor.process(file_content, file_name)
-        
+
         vectors = []
         metadata = []
         for content in processed_contents:
@@ -31,9 +31,9 @@ class VectorService:
                 continue
             vectors.append(vector)
             metadata.append(content)
-        
+
         return self.db_adapter.insert(vectors, metadata)
-    
+
     def search(self, query: str, top_k: int = 5, query_type: str = "text", file_ids: Union[List[str], None] = None) -> List[Dict[str, Any]]:
         if query_type == "text":
             query_vector = self.text_embedding_model.embed(query)
@@ -65,6 +65,6 @@ class VectorService:
             }
             for hit in results
         ]
-    
+
     def delete(self, ids: List[str]) -> bool:
         return self.db_adapter.delete(ids)

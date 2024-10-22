@@ -103,8 +103,6 @@ class MilvusAdapter(VectorDBInterface):
         filter = None
         if expressions:
             filter = " and ".join(expressions)
-        
-        print(filter)
 
         result = self.client.search(
             collection_name=self.collection_name,
@@ -146,6 +144,8 @@ class MilvusAdapter(VectorDBInterface):
         return result
 
     def delete(self, file_ids: List[str]) -> bool:
-        expr = f"file_id in {file_ids}"
-        result = self.client.delete(self.collection_name, expr)
-        return result.delete_count > 0
+        formatted_ids = ', '.join(f'"{file_id}"' for file_id in file_ids)
+        expr = f'file_id in [{formatted_ids}]'
+        
+        result = self.client.delete(collection_name=self.collection_name, filter=expr)
+        return len(result) != 0

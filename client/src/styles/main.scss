@@ -1,7 +1,8 @@
-@import "variables";
+@use "sass:meta";
+@use "variables";
 
 @import "bootstrap/dist/css/bootstrap.min.css";
 /* If you need to customize variables: */
 /* @import "bootstrap/scss/bootstrap"; */
 
-@import "mixins";
+@include meta.load-css("mixins");

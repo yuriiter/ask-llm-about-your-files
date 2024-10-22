@@ -1,3 +1,5 @@
+@use "sass:color";
+@use "sass:map";
 $use-colorscheme: false;
 
 $breakpoints: (
@@ -11,7 +13,7 @@ $breakpoints: (
 );
 
 @mixin max-width($breakpoint) {
-  $value: map-get($breakpoints, $breakpoint);
+  $value: map.get($breakpoints, $breakpoint);
 
   @if $value !=null {
     @media (max-width: $value) {
@@ -31,7 +33,7 @@ $breakpoints: (
 }
 
 @mixin min-width($breakpoint) {
-  $value: map-get($breakpoints, $breakpoint);
+  $value: map.get($breakpoints, $breakpoint);
 
   @if $value !=null {
     @media (min-width: $value) {
@@ -55,7 +57,7 @@ $breakpoints: (
   background-color: $color;
 
   @if $second-color ==null {
-    $second-color: invert($color);
+    $second-color: color.invert($color);
   }
 
   @include dark {
@@ -67,7 +69,7 @@ $breakpoints: (
   color: $color;
 
   @if $second-color ==null {
-    $second-color: invert($color);
+    $second-color: color.invert($color);
   }
 
   @include dark {

@@ -25,7 +25,7 @@ class EmbeddingModelInterface(ABC):
 
 class FileProcessorInterface(ABC):
     @abstractmethod
-    def process(self, file_content: bytes, file_name: str) -> List[Dict[str, Union[str, bytes]]]:
+    def process(self, file_content: bytes, file_name: str) -> List[Dict[str, Union[str, bytes, dict]]]:
         pass
 
     def chunk_text(self, text: str, chunk_size: int = 1000, overlap: int = 100) -> List[str]:

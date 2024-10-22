@@ -1,13 +1,13 @@
 import rarfile
 import io
 from core.interfaces import FileProcessorInterface
-from typing import List, Dict, Union
+from typing import Dict
 
 class RarProcessor(FileProcessorInterface):
-    def __init__(self, file_processors: Dict[str, FileProcessorInterface] = None):
+    def __init__(self, file_processors: Dict[str, FileProcessorInterface] = {}):
         self.file_processors = file_processors or {}
 
-    def process(self, file_content: bytes, file_name: str) -> List[Dict[str, Union[str, bytes]]]:
+    def process(self, file_content: bytes, file_name: str):
         results = []
         with rarfile.RarFile(io.BytesIO(file_content)) as rar_file:
             for name in rar_file.namelist():

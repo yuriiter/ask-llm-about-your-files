@@ -1,13 +1,13 @@
 import zipfile
 import io
 from core.interfaces import FileProcessorInterface
-from typing import List, Dict, Union
+from typing import Dict
 
 class ZipProcessor(FileProcessorInterface):
-    def __init__(self, file_processors: Dict[str, FileProcessorInterface] = None):
+    def __init__(self, file_processors: Dict[str, FileProcessorInterface] = {}):
         self.file_processors = file_processors or {}
 
-    def process(self, file_content: bytes, file_name: str) -> List[Dict[str, Union[str, bytes]]]:
+    def process(self, file_content: bytes, file_name: str):
         results = []
         with zipfile.ZipFile(io.BytesIO(file_content)) as zip_file:
             for name in zip_file.namelist():

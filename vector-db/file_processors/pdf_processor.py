@@ -1,7 +1,5 @@
-import json
 from core.interfaces import FileProcessorInterface
 import pymupdf
-import io
 from typing import List, Dict, Union
 import base64
 from uuid import uuid4
@@ -28,7 +26,7 @@ def recoverpix(doc, item):
         return None
 
 class PDFProcessor(FileProcessorInterface):
-    def process(self, file_content: bytes, file_name: str) -> List[Dict[str, Union[str, bytes]]]:
+    def process(self, file_content: bytes, file_name: str) -> List[Dict[str, Union[str, bytes, dict]]]:
         file_id = str(uuid4())
         pdf_document = pymupdf.open(stream=file_content, filetype="pdf")
         result = []

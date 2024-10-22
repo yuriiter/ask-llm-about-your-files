@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from core.interfaces import APIInterface
 from core.vector_service import VectorService
 import traceback
+import os
 
 class Query(BaseModel):
     query: str
@@ -46,4 +47,5 @@ class FastAPIApp(APIInterface):
 
     def run(self):
         import uvicorn
-        uvicorn.run(self.app, host="0.0.0.0", port=8000)
+        port = os.getenv('PORT', '5000')
+        uvicorn.run(self.app, host="0.0.0.0", port=int(port))

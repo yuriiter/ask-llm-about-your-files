@@ -1,3 +1,4 @@
+from typing import List, Union
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from pydantic import BaseModel
 from core.interfaces import APIInterface
@@ -5,8 +6,10 @@ from core.vector_service import VectorService
 import traceback
 
 class Query(BaseModel):
-    text: str
-    top_k: int = 5
+    query: str
+    top_results: int = 5
+    type: str = "text"
+    file_ids: Union[List[str], None] = None
 
 class FastAPIApp(APIInterface):
     def __init__(self, vector_service: VectorService):
@@ -26,7 +29,7 @@ class FastAPIApp(APIInterface):
         @self.app.post("/search")
         async def search(query: Query):
             try:
-                results = self.vector_service.search(query.text, query.top_k)
+                results = self.vector_service.search(query.query, query.top_results, query.type, query.file_ids)
                 return {"results": results}
             except Exception as e:
                 print(traceback.format_exc())

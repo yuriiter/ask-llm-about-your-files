@@ -31,7 +31,7 @@ text_embedding_model:
 
 image_embedding_model:
   interface: "core.interfaces.EmbeddingModelInterface"
-  implementation: "embedding_models.resnet_image_embedding.ResNetImageEmbedding"
+  implementation: "embedding_models.clip_dual_embedding.ClipDualEmbedding"
   params:
     model_name: resnet50
     use_cuda: false

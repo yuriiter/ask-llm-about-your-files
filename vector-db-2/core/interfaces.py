@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Union
+from typing import List, Dict, Any, Union, Optional
 
 class VectorDBInterface(ABC):
     @abstractmethod
@@ -11,11 +11,11 @@ class VectorDBInterface(ABC):
         pass
     
     @abstractmethod
-    def search(self, query_vector: List[float], top_k: int) -> List[Dict[str, Any]]:
+    def search(self, query_vector: List[float], top_k: int, file_ids: Optional[List[str]] = None, query_type: str = "text") -> List[Dict[str, Any]]:
         pass
     
     @abstractmethod
-    def delete(self, ids: List[str]) -> bool:
+    def delete(self, file_ids: List[str]) -> bool:
         pass
 
 class EmbeddingModelInterface(ABC):

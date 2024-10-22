@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 from .interfaces import VectorDBInterface, EmbeddingModelInterface, FileProcessorInterface
 
 class VectorService:
@@ -34,9 +34,37 @@ class VectorService:
         
         return self.db_adapter.insert(vectors, metadata)
     
-    def search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
-        query_vector = self.text_embedding_model.embed(query)
-        return self.db_adapter.search(query_vector, top_k)
+    def search(self, query: str, top_k: int = 5, query_type: str = "text", file_ids: Union[List[str], None] = None) -> List[Dict[str, Any]]:
+        if query_type == "text":
+            query_vector = self.text_embedding_model.embed(query)
+            return self._search_with_vector(query_vector, top_k, file_ids, "text")
+        elif query_type == "image":
+            query_vector = self.image_embedding_model.embed(query)
+            return self._search_with_vector(query_vector, top_k, file_ids, "image")
+        elif query_type == "all":
+            text_vector = self.text_embedding_model.embed(query)
+            image_vector = self.image_embedding_model.embed(query)
+            text_results = self._search_with_vector(text_vector, top_k, file_ids, "text")
+            image_results = self._search_with_vector(image_vector, top_k, file_ids, "image")
+            combined_results = text_results + image_results
+            combined_results.sort(key=lambda x: x["distance"])
+            return combined_results
+        else:
+            raise ValueError(f"Invalid query type: {query_type}")
+
+    def _search_with_vector(self, query_vector: List[float], top_k: int, file_ids: Union[List[str], None], query_type: str) -> List[Dict[str, Any]]:
+        results = self.db_adapter.search(query_vector, top_k, file_ids, query_type)
+        return [
+            {
+                "id": hit["id"],
+                "type": hit["type"],
+                "distance": hit["distance"],
+                "content": hit["content"],
+                "file_id": hit["file_id"],
+                "metadata": hit["metadata"],
+            }
+            for hit in results
+        ]
     
     def delete(self, ids: List[str]) -> bool:
         return self.db_adapter.delete(ids)

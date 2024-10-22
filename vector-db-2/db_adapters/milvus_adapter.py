@@ -91,16 +91,31 @@ class MilvusAdapter(VectorDBInterface):
 
         return self.summarize_uploaded_files(metadata)
 
-    def search(self, query_vector: List[float], top_k: int) -> List[Dict[str, Any]]:
+    def search(self, query_vector: List[float], top_k: int, file_ids: Optional[List[str]] = None, query_type: str = "text") -> List[Dict[str, Any]]:
+        expressions = []
+        
+        if file_ids and len(file_ids) > 0:
+            expressions.append(f"file_id in {file_ids}")
+        
+        if query_type != "all" and query_type != None and query_type != '':
+            expressions.append(f"type == '{query_type}'")
+        
+        filter = None
+        if expressions:
+            filter = " and ".join(expressions)
+        
+        print(filter)
+
         result = self.client.search(
             collection_name=self.collection_name,
             data=[query_vector],
             anns_field="vector",
             search_params={"metric_type": "COSINE", "params": {}},
             limit=top_k,
-            output_fields=["id", "type", "distance", "metadata", "file_id", "content"]
+            output_fields=["id", "type", "distance", "metadata", "file_id", "content"],
+            filter=filter or ""
         )
-        print(result)
+        
         return [
             {
                 "id": hit["entity"].get("id"),
@@ -130,7 +145,7 @@ class MilvusAdapter(VectorDBInterface):
 
         return result
 
-    def delete(self, ids: List[str]) -> bool:
-        expr = f"id in {ids}"
+    def delete(self, file_ids: List[str]) -> bool:
+        expr = f"file_id in {file_ids}"
         result = self.client.delete(self.collection_name, expr)
         return result.delete_count > 0

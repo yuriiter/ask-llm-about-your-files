@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from utils.config_manager import ConfigManager
 from core.vector_service import VectorService
 

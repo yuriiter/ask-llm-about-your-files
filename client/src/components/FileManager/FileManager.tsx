@@ -1,6 +1,5 @@
 import { ActionButtons } from "./ActionButtons";
 import { FileTable } from "./FileTable";
-import { SearchBar } from "./SearchBar";
 import { FileInfo } from "./types";
 
 export const FileManager: React.FC = () => {
@@ -21,10 +20,7 @@ export const FileManager: React.FC = () => {
           <div className="card">
             <div className="card-body">
               <div className="row mb-3">
-                <div className="col-lg-4 col-sm-6">
-                  <SearchBar />
-                </div>
-                <div className="col-lg-8 col-sm-6">
+                <div className="col-lg-12 col-sm-6">
                   <ActionButtons />
                 </div>
               </div>

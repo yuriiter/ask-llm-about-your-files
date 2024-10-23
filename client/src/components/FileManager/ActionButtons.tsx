@@ -1,13 +1,19 @@
 "use client";
 
-import BoxIcon from "../BoxIcon";
 import { signOut } from "next-auth/react";
+import { FaCommentAlt } from "react-icons/fa";
 
 export const ActionButtons = () => {
   return (
-    <div className="mt-4 mt-sm-0 d-flex align-items-center justify-content-sm-end">
+    <div className="mt-4 mt-sm-0 d-flex align-items-center justify-content-between">
+      <button
+        className="btn btn-primary d-flex justify-content-center align-items-center rounded-circle"
+        style={{ width: "40px", height: "40px" }}
+      >
+        <FaCommentAlt />
+      </button>
       <div className="mb-2 me-2">
-        <div className="dropdown gap-2 d-flex">
+        <div className="gap-2 d-flex">
           <button className="btn btn-primary" type="button">
             <i className="mdi mdi-plus me-1"></i> Upload new file
           </button>
@@ -18,35 +24,6 @@ export const ActionButtons = () => {
           >
             Log out
           </button>
-          <div className="dropdown-menu dropdown-menu-end">
-            <a className="dropdown-item" href="#">
-              <i className="mdi mdi-folder-outline me-1"></i> Folder
-            </a>
-            <a className="dropdown-item" href="#">
-              <i className="mdi mdi-file-outline me-1"></i> File
-            </a>
-          </div>
-        </div>
-      </div>
-      <div className="dropdown mb-0">
-        <a
-          className="btn btn-link text-muted dropdown-toggle p-1 mt-n2"
-          role="button"
-          data-bs-toggle="dropdown"
-          aria-haspopup="true"
-        >
-          <BoxIcon name="dots-vertical-rounded" size={20} />
-        </a>
-        <div className="dropdown-menu dropdown-menu-end">
-          <a className="dropdown-item" href="#">
-            Share Files
-          </a>
-          <a className="dropdown-item" href="#">
-            Share with me
-          </a>
-          <a className="dropdown-item" href="#">
-            Other Actions
-          </a>
         </div>
       </div>
     </div>

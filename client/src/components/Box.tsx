@@ -7,7 +7,7 @@ const NotStyledBox = <C extends ElementType = "div">(
   props: BoxProps<C>,
   ref: Ref<HTMLElement>,
 ) => {
-  const { component, sx, ...rest } = props;
+  const { component, sx: _sx, ...rest } = props;
 
   const Component = component ?? "div";
 

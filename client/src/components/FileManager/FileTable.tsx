@@ -1,5 +1,4 @@
 import { MdDelete } from "react-icons/md";
-import BoxIcon from "../BoxIcon";
 import { FileInfo } from "./types";
 
 export const FileTable: React.FC<{ files: FileInfo[] }> = ({ files }) => {

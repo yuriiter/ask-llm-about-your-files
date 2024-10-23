@@ -56,11 +56,11 @@ export default function Page() {
 
       <h2 className="text-xl font-semibold mt-6">Disclaimer of Warranties</h2>
       <p>
-        Our website is provided on an "as is" and "as available" basis without
-        any warranties of any kind, either express or implied. We do not warrant
-        that the website will be uninterrupted, secure, or error-free, nor do we
-        make any warranties regarding the accuracy or reliability of any
-        information obtained through the website.
+        Our website is provided on an &quot;as is&quot; and &quot;as
+        available&quot; basis without any warranties of any kind, either express
+        or implied. We do not warrant that the website will be uninterrupted,
+        secure, or error-free, nor do we make any warranties regarding the
+        accuracy or reliability of any information obtained through the website.
       </p>
 
       <h2 className="text-xl font-semibold mt-6">Limitation of Liability</h2>
@@ -75,8 +75,8 @@ export default function Page() {
       <p>
         You agree to indemnify and hold us harmless from any claims, damages,
         losses, liabilities, costs, and expenses (including reasonable
-        attorneys' fees) arising out of or in connection with your use of the
-        website or violation of these Terms of Service.
+        attorneys&apos; fees) arising out of or in connection with your use of
+        the website or violation of these Terms of Service.
       </p>
 
       <h2 className="text-xl font-semibold mt-6">Governing Law</h2>

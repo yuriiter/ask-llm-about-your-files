@@ -89,8 +89,8 @@ export default function Page() {
       <p>
         Our website may contain links to other sites that are not operated by
         us. If you click on a third-party link, you will be directed to that
-        third party's site. We strongly advise you to review the Privacy Policy
-        and terms of service of any site you visit.
+        third party&apos;s site. We strongly advise you to review the Privacy
+        Policy and terms of service of any site you visit.
       </p>
 
       <h2 className="text-xl font-semibold mt-6">

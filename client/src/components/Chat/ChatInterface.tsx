@@ -1,7 +1,11 @@
 "use client";
 
-import { ArrowLeftOutlined, SendOutlined } from "@ant-design/icons";
-import { Layout, Input, Button, Typography } from "antd";
+import {
+  ArrowLeftOutlined,
+  RobotOutlined,
+  SendOutlined,
+} from "@ant-design/icons";
+import { Layout, Input, Button, Typography, Avatar, Card, Spin } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { EmptyState } from "./EmptyState";
 import { Message } from "./types";

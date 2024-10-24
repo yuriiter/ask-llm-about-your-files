@@ -1,11 +1,12 @@
 "use client";
 
-import { SendOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, SendOutlined } from "@ant-design/icons";
 import { Layout, Input, Button, Typography } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { EmptyState } from "./EmptyState";
 import { Message } from "./types";
 import { AssistantMessage, UserMessage } from "./Message";
+import Link from "next/link";
 
 const { Header, Footer, Content } = Layout;
 const { TextArea } = Input;
@@ -66,6 +67,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <Title level={4} style={{ margin: 0 }}>
           Chat Assistant
         </Title>
+        <Link href="/files" passHref>
+          <Button
+            style={{ marginLeft: 20 }}
+            type="link"
+            icon={<ArrowLeftOutlined />}
+          >
+            Back to files
+          </Button>
+        </Link>
       </Header>
 
       <Content

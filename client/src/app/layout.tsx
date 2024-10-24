@@ -1,6 +1,4 @@
 import { Providers } from "@/components/Providers";
-import StyledComponentsRegistry from "@/components/StyledComponentsRegistry";
-import "@/styles/main.scss";
 
 export default async function RootLayout({
   children,
@@ -10,9 +8,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <StyledComponentsRegistry>
-          <Providers>{children}</Providers>
-        </StyledComponentsRegistry>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

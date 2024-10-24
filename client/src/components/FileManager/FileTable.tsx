@@ -1,41 +1,45 @@
 import { MdDelete } from "react-icons/md";
+import { Table, IconButton, Text } from "@chakra-ui/react";
 import { FileInfo } from "./types";
 
 export const FileTable: React.FC<{ files: FileInfo[] }> = ({ files }) => {
   return (
     <div className="table-responsive">
-      <table className="table align-middle table-nowrap table-hover mb-0">
-        <thead className="table-light">
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Date uploaded</th>
-            <th scope="col">Size</th>
-          </tr>
-        </thead>
-        <tbody>
-          {files.map((file, index) => (
-            <tr key={index}>
-              <td>
-                <a href="#" className="text-dark fw-medium">
+      <Table.Root variant="outline" colorScheme="gray" size="md">
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Name</Table.ColumnHeader>
+            <Table.ColumnHeader>Date Uploaded</Table.ColumnHeader>
+            <Table.ColumnHeader>Size</Table.ColumnHeader>
+            <Table.ColumnHeader>Actions</Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {files.map((file) => (
+            <Table.Row key={file.id}>
+              <Table.Cell>
+                <Text display="flex" alignItems="center" fontWeight="medium">
                   <i
                     className={`${file.icon} font-size-16 align-middle text-primary me-2`}
-                  ></i>
+                  />
                   {file.name}
-                </a>
-              </td>
-              <td>{file.uploaded}</td>
-              <td>{file.size}</td>
-              <td>
-                <div className="dropdown">
-                  <a className="text-muted" role="button">
-                    <MdDelete size={20} />
-                  </a>
-                </div>
-              </td>
-            </tr>
+                </Text>
+              </Table.Cell>
+              <Table.Cell>{file.uploaded}</Table.Cell>
+              <Table.Cell>{file.size}</Table.Cell>
+              <Table.Cell>
+                <IconButton
+                  aria-label="Delete file"
+                  variant="ghost"
+                  colorScheme="red"
+                >
+                  <MdDelete size={20} />
+                </IconButton>
+              </Table.Cell>
+            </Table.Row>
           ))}
-        </tbody>
-      </table>
+        </Table.Body>
+      </Table.Root>
     </div>
   );
 };

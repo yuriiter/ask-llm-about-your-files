@@ -1,3 +1,4 @@
+import { Box, Card, CardBody, Heading, Container } from "@chakra-ui/react";
 import { ActionButtons } from "./ActionButtons";
 import { FileTable } from "./FileTable";
 import { FileInfo } from "./types";
@@ -14,31 +15,30 @@ export const FileManager: React.FC = () => {
   ];
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-xl-12">
-          <div className="card">
-            <div className="card-body">
-              <div className="row mb-3">
-                <div className="col-lg-12 col-sm-6">
-                  <ActionButtons />
-                </div>
-              </div>
+    <Container maxW="container.xl">
+      <Box>
+        <Card.Root>
+          <CardBody>
+            <Box mb={3}>
+              <ActionButtons />
+            </Box>
 
-              <div className="d-flex flex-wrap">
-                <h5 className="font-size-16 me-3">Files</h5>
-                <div className="ms-auto">
-                  <a href="#" className="fw-medium text-reset">
+            <Box divideX="2px">
+              <Box display="flex" flexWrap="wrap" alignItems="center">
+                <Heading size="md" mr={3}>
+                  Files
+                </Heading>
+                <Box ml="auto">
+                  <Box as="a" href="#" fontWeight="medium">
                     View All
-                  </a>
-                </div>
-              </div>
-              <hr className="mt-2" />
+                  </Box>
+                </Box>
+              </Box>
               <FileTable files={files} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Box>
+          </CardBody>
+        </Card.Root>
+      </Box>
+    </Container>
   );
 };

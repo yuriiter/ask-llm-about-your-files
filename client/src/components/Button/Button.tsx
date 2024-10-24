@@ -1,28 +1,31 @@
+import {
+  Button as ChakraButton,
+  ButtonProps as ChakraButtonProps,
+} from "@chakra-ui/react";
 import Link from "next/link";
-import { Ref, forwardRef } from "react";
-import { cn } from "../../utils/utils";
-import styles from "./Button.module.scss";
-import { ButtonBase, ButtonBaseProps } from "./ButtonBase";
+import { forwardRef } from "react";
 
-type ButtonVariant = "blurry" | "gradient" | "solid" | "regular";
-
-type ButtonProps<C extends "button" | typeof Link> = ButtonBaseProps<C> & {
-  variant?: ButtonVariant;
+type ButtonProps = ChakraButtonProps & {
+  href?: string;
+  variant?: "solid" | "outline" | "ghost" | "link";
 };
 
-const NotForwardedButton = <C extends "button" | typeof Link>(
-  { variant = "solid", className, ...baseProps }: ButtonProps<C>,
-  ref: Ref<HTMLElement>,
-) => {
-  return (
-    <ButtonBase
-      {...(baseProps as ButtonBaseProps<"button" | typeof Link>)}
-      className={cn("Button", className, styles.root, styles[variant])}
-      ref={ref}
-    />
-  );
-};
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ href, children, ...props }, ref) => {
+    if (href) {
+      return (
+        <ChakraButton as={Link} href={href} ref={ref} {...props}>
+          {children}
+        </ChakraButton>
+      );
+    }
 
-export const Button = forwardRef(NotForwardedButton);
+    return (
+      <ChakraButton ref={ref} {...props}>
+        {children}
+      </ChakraButton>
+    );
+  },
+);
 
 Button.displayName = "Button";

@@ -28,14 +28,14 @@ const config = [
                     argsIgnorePattern: "^_",
                 },
             ],
-            "import/no-unused-modules": [
-                "warn",
-                {
-                    unusedExports: true,
-                    missingExports: false,
-                    ignoreUnusedTypeExports: true,
-                },
-            ],
+            // "import/no-unused-modules": [
+            //     "warn",
+            //     {
+            //         unusedExports: true,
+            //         missingExports: false,
+            //         ignoreUnusedTypeExports: true,
+            //     },
+            // ],
         },
     },
 ];

@@ -1,45 +1,153 @@
-import { MdDelete } from "react-icons/md";
-import { Table, IconButton, Text } from "@chakra-ui/react";
-import { FileInfo } from "./types";
+"use client";
 
-export const FileTable: React.FC<{ files: FileInfo[] }> = ({ files }) => {
+import React, { useState } from "react";
+import { Table, Button, Input } from "antd";
+import {
+  DeleteOutlined,
+  FileOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { debounce } from "lodash";
+import { FileInfo } from "./types";
+import { deleteFiles, fetchFiles } from "@/lib/actions/data";
+
+interface TableParams {
+  pagination: {
+    current: number;
+    pageSize: number;
+  };
+  searchQuery: string;
+}
+
+export const FileTable: React.FC = () => {
+  const queryClient = useQueryClient();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [tableParams, setTableParams] = useState<TableParams>({
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+    searchQuery: "",
+  });
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["files", tableParams],
+    queryFn: () =>
+      fetchFiles({
+        current: tableParams.pagination.current,
+        pageSize: tableParams.pagination.pageSize,
+        searchQuery: tableParams.searchQuery,
+      }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteFiles,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["files"] });
+      setSelectedRowKeys([]);
+    },
+  });
+
+  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+    setTableParams({
+      ...tableParams,
+      pagination: {
+        current: pagination.current,
+        pageSize: pagination.pageSize,
+      },
+    });
+  };
+
+  const handleSearch = debounce((value: string) => {
+    setTableParams({
+      ...tableParams,
+      pagination: { ...tableParams.pagination, current: 1 },
+      searchQuery: value,
+    });
+  }, 500);
+
+  const handleDelete = () => {
+    if (selectedRowKeys.length > 0) {
+      deleteMutation.mutate(selectedRowKeys as string[]);
+    }
+  };
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text: string) => (
+        <span className="flex items-center">
+          <FileOutlined className="mr-2" />
+          {text}
+        </span>
+      ),
+    },
+    {
+      title: "Date Uploaded",
+      dataIndex: "uploaded",
+      key: "uploaded",
+    },
+    {
+      title: "Size",
+      dataIndex: "size",
+      key: "size",
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_: any, record: FileInfo) => (
+        <Button
+          type="text"
+          danger
+          icon={<DeleteOutlined />}
+          onClick={() => deleteMutation.mutate([record.id])}
+        />
+      ),
+    },
+  ];
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (newSelectedRowKeys: React.Key[]) => {
+      setSelectedRowKeys(newSelectedRowKeys);
+    },
+  };
+
   return (
-    <div className="table-responsive">
-      <Table.Root variant="outline" colorScheme="gray" size="md">
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader>Name</Table.ColumnHeader>
-            <Table.ColumnHeader>Date Uploaded</Table.ColumnHeader>
-            <Table.ColumnHeader>Size</Table.ColumnHeader>
-            <Table.ColumnHeader>Actions</Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {files.map((file) => (
-            <Table.Row key={file.id}>
-              <Table.Cell>
-                <Text display="flex" alignItems="center" fontWeight="medium">
-                  <i
-                    className={`${file.icon} font-size-16 align-middle text-primary me-2`}
-                  />
-                  {file.name}
-                </Text>
-              </Table.Cell>
-              <Table.Cell>{file.uploaded}</Table.Cell>
-              <Table.Cell>{file.size}</Table.Cell>
-              <Table.Cell>
-                <IconButton
-                  aria-label="Delete file"
-                  variant="ghost"
-                  colorScheme="red"
-                >
-                  <MdDelete size={20} />
-                </IconButton>
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <Input
+          placeholder="Search files..."
+          prefix={<SearchOutlined />}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="max-w-xs"
+        />
+        {selectedRowKeys.length > 0 && (
+          <Button
+            danger
+            onClick={handleDelete}
+            loading={deleteMutation.isPending}
+          >
+            Delete Selected ({selectedRowKeys.length})
+          </Button>
+        )}
+      </div>
+
+      <Table
+        columns={columns}
+        dataSource={data?.files}
+        rowKey="id"
+        rowSelection={rowSelection}
+        pagination={{
+          ...tableParams.pagination,
+          total: data?.total,
+        }}
+        loading={isLoading}
+        onChange={handleTableChange}
+      />
     </div>
   );
 };

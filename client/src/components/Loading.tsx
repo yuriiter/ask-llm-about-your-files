@@ -1,19 +1,18 @@
-import { Spinner, Center } from "@chakra-ui/react";
+import { Spin } from "antd";
 
-type Props = {
-  type?: "border" | "grow";
-};
-
-export const Loading = ({ type = "border" }: Props) => {
+export const Loading = () => {
   return (
-    <Center h="100vh" w="100vw" bg="white">
-      <Spinner
-        thickness="4px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="blue.500"
-        size="xl"
-      />
-    </Center>
+    <div
+      style={{
+        height: "100vh",
+        width: "100vw",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "white",
+      }}
+    >
+      <Spin size="large" />
+    </div>
   );
 };

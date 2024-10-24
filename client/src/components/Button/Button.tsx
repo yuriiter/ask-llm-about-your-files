@@ -1,31 +1,19 @@
-import {
-  Button as ChakraButton,
-  ButtonProps as ChakraButtonProps,
-} from "@chakra-ui/react";
+import { Button as AntButton } from "antd";
+import { ButtonProps as AntButtonProps } from "antd/lib/button";
 import Link from "next/link";
-import { forwardRef } from "react";
 
-type ButtonProps = ChakraButtonProps & {
+type ButtonProps = AntButtonProps & {
   href?: string;
-  variant?: "solid" | "outline" | "ghost" | "link";
 };
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ href, children, ...props }, ref) => {
-    if (href) {
-      return (
-        <ChakraButton as={Link} href={href} ref={ref} {...props}>
-          {children}
-        </ChakraButton>
-      );
-    }
-
+export const Button = ({ href, children, ...props }: ButtonProps) => {
+  if (href) {
     return (
-      <ChakraButton ref={ref} {...props}>
-        {children}
-      </ChakraButton>
+      <Link href={href} passHref>
+        <AntButton {...props}>{children}</AntButton>
+      </Link>
     );
-  },
-);
+  }
 
-Button.displayName = "Button";
+  return <AntButton {...props}>{children}</AntButton>;
+};

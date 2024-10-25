@@ -6,6 +6,7 @@
     "dev": "concurrently \"next dev --turbo\" \"npm run db:dev\" ",
     "build": "next build",
     "db:dev": "docker-compose up",
+    "grpc:generate": "protoc -I=../proto/ --ts_out=src/grpc/generated vector_service.proto",
     "prisma:migrate": "prisma db push",
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
@@ -25,6 +26,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "antd": "^5.21.5",
     "axios": "^1.7.7",
+    "google-protobuf": "^3.21.4",
     "lodash": "^4.17.21",
     "next": "15.0.0",
     "next-auth": "5.0.0-beta.25",
@@ -37,6 +39,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.13.0",
+    "@types/google-protobuf": "^3.15.12",
     "@types/lodash": "^4.17.12",
     "@types/node": "^22.7.8",
     "@types/react": "^18.3.11",
@@ -48,6 +51,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-preset-env": "^10.0.7",
+    "protoc-gen-ts": "^0.8.7",
     "sass": "^1.80.3",
     "typescript": "^5.6.3"
   }

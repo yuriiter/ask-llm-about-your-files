@@ -6,7 +6,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-1.1.x"]
+  binaryTargets = ["native", "rhel-openssl-1.1.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -21,11 +21,11 @@ model User {
 }
 
 model File {
-  id             String @id @default(uuid()) @db.Char(57)
-  external_db_id String @unique @db.Char(57)
+  id             String   @id @default(uuid()) @db.Char(57)
+  external_db_id String   @unique @db.Char(57)
   data_uploaded  DateTime @default(now())
   size           Int
-  name           String @db.Char(100)
-  User           User   @relation(fields: [userId], references: [id])
-  userId         String @db.Char(57)
+  name           String   @db.Char(100)
+  User           User     @relation(fields: [userId], references: [id])
+  userId         String   @db.Char(57)
 }

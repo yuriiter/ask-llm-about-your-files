@@ -7,7 +7,7 @@ import {
   UploadOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
-import { UploadFile, UploadProps } from "antd/es/upload";
+import { RcFile, UploadProps } from "antd/es/upload";
 import { uploadFile } from "@/lib/actions/data";
 
 const { Dragger } = Upload;
@@ -15,7 +15,7 @@ const { Dragger } = Upload;
 export const ActionButtons = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileList, setFileList] = useState<RcFile[]>([]);
 
   const handleUpload = async () => {
     if (fileList.length === 0) return;
@@ -24,9 +24,9 @@ export const ActionButtons = () => {
 
     try {
       const formData = new FormData();
-      if (fileList[0].originFileObj) {
-        formData.append("file", fileList[0].originFileObj);
-      }
+      if (fileList[0]) {
+        formData.append("file", fileList[0]);
+      } else return;
 
       const result = await uploadFile(formData);
 
@@ -46,7 +46,7 @@ export const ActionButtons = () => {
       setFileList([]);
     },
 
-    beforeUpload: (file: UploadFile) => {
+    beforeUpload: (file: RcFile) => {
       const allowedTypes = [
         "image/jpeg",
         "image/png",
@@ -62,7 +62,7 @@ export const ActionButtons = () => {
       }
 
       const isAllowedType = allowedTypes.includes(file.type);
-      const isLessThan10MB = file.size / 1024 / 1024 < 100;
+      const isLessThan100MB = file.size / 1024 / 1024 < 100;
 
       if (!isAllowedType) {
         message.error(
@@ -71,12 +71,12 @@ export const ActionButtons = () => {
         return Upload.LIST_IGNORE;
       }
 
-      if (!isLessThan10MB) {
+      if (!isLessThan100MB) {
         message.error("File must be smaller than 10MB!");
         return Upload.LIST_IGNORE;
       }
 
-      setFileList([file]); // Replace the entire fileList with the new file
+      setFileList([file]);
       return false;
     },
 

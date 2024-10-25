@@ -36,7 +36,7 @@ export const FileTable: React.FC = () => {
     queryKey: ["files", tableParams],
     queryFn: () =>
       fetchFiles({
-        current: tableParams.pagination.current,
+        current: tableParams.pagination.current - 1,
         pageSize: tableParams.pagination.pageSize,
         searchQuery: tableParams.searchQuery,
       }),

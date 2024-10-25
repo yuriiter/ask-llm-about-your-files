@@ -25,7 +25,7 @@ export const fetchFiles = async ({
   try {
     const filesSearchResult = await userRepository.getFilesByUserEmail(email, {
       name: searchQuery,
-      skip: current + pageSize,
+      skip: current * pageSize,
       take: pageSize,
     });
 

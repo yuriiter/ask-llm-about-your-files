@@ -10,13 +10,6 @@ export const promisedTimeout = (duration: number) =>
     setTimeout(() => resolve(1), duration);
   });
 
-export const bytesToHumanReadable = (bytes: number) => {
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"];
-  if (bytes === 0) return "0 Bytes";
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + " " + sizes[i];
-};
-
 export const dateToShortHumanReadable = (date: Date) => {
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",

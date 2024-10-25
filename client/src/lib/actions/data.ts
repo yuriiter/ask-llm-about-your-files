@@ -1,5 +1,10 @@
 "use server";
 
+import { auth } from "../../auth";
+import { UserNotFoundError } from "../../errors/dbErrors";
+import { redirectUnauthenticated } from "../redirectUnauthenticated";
+import { userRepository } from "../repositories/UserRepository";
+
 export const fetchFiles = async ({
   current,
   pageSize,
@@ -9,19 +14,47 @@ export const fetchFiles = async ({
   pageSize: number;
   searchQuery: string;
 }) => {
-  const response = await fetch(
-    `/api/files?page=${current}&pageSize=${pageSize}&search=${searchQuery}`,
-  );
-  return response.json();
+  const session = await auth();
+  const email = session?.user?.email;
+
+  if (!email) return redirectUnauthenticated();
+
+  try {
+    const filesSearchResult = await userRepository.getFilesByUserEmail(email, {
+      name: searchQuery,
+      skip: current + pageSize,
+      take: pageSize,
+    });
+
+    return filesSearchResult;
+  } catch (e) {
+    if (e instanceof UserNotFoundError) redirectUnauthenticated();
+  }
+  throw new Error("An unknown error occurred");
 };
 
 export const deleteFiles = async (fileIds: string[]) => {
-  const response = await fetch("/api/files", {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ fileIds }),
-  });
-  return response.json();
+  const session = await auth();
+  const email = session?.user?.email;
+
+  if (!email) return redirectUnauthenticated();
+
+  try {
+    const filesSearchResult =
+      await userRepository.deleteFilesByUserEmailAndFileIds(email, fileIds);
+
+    return filesSearchResult.count !== 0;
+  } catch (e) {
+    if (e instanceof UserNotFoundError) redirectUnauthenticated();
+  }
+  throw new Error("An unknown error occurred");
+};
+
+export const uploadFile = async () => {
+  const session = await auth();
+  const email = session?.user?.email;
+
+  if (!email) return redirectUnauthenticated();
+
+  throw new Error("Not implemented");
 };

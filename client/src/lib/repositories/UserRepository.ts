@@ -22,7 +22,7 @@ class UserRepository {
     return prisma.user.create({ data: { email } });
   }
 
-  async uploadFiles(email: string, files: Prisma.FileCreateInput[]) {
+  async uploadFiles(email: string, files: Prisma.FileUncheckedCreateInput[]) {
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -68,7 +68,6 @@ class UserRepository {
       select: {
         id: true,
         name: true,
-        size: true,
         data_uploaded: true,
       },
     });

@@ -39,17 +39,18 @@ class VectorServiceClient {
     );
   }
 
-  public async uploadFile(
+  public uploadFile = async (
     content: Uint8Array,
     filename: string,
-  ): Promise<UploadFileResponse> {
+  ): Promise<UploadFileResponse> => {
+    const client = this.client;
     const uploadFileRequest = new vector_service.UploadFileRequest({
       content,
       filename,
     });
 
     return new Promise((resolve, reject) => {
-      this.client.UploadFile(uploadFileRequest, (err, response) => {
+      client.UploadFile(uploadFileRequest, (err, response) => {
         if (err) reject(err);
 
         const result =
@@ -66,14 +67,15 @@ class VectorServiceClient {
         });
       });
     });
-  }
+  };
 
-  public async search(
+  public search = async (
     query: string,
     topResults?: number,
     type?: string,
     fileIds?: string[],
-  ): Promise<SearchResult[]> {
+  ): Promise<SearchResult[]> => {
+    const client = this.client;
     const searchRequest = new vector_service.SearchRequest({
       query,
       top_results: topResults,
@@ -82,7 +84,7 @@ class VectorServiceClient {
     });
 
     return new Promise((resolve, reject) => {
-      this.client.Search(searchRequest, (err, response) => {
+      client.Search(searchRequest, (err, response) => {
         if (err) reject(err);
 
         const results =
@@ -98,15 +100,16 @@ class VectorServiceClient {
         resolve(results);
       });
     });
-  }
+  };
 
-  public async delete(id: string): Promise<DeleteResponse> {
+  public delete = async (id: string): Promise<DeleteResponse> => {
+    const client = this.client;
     const deleteRequest = new vector_service.DeleteRequest({
       id,
     });
 
     return new Promise((resolve, reject) => {
-      this.client.Delete(deleteRequest, (err, response) => {
+      client.Delete(deleteRequest, (err, response) => {
         if (err) reject(err);
 
         resolve({
@@ -115,7 +118,7 @@ class VectorServiceClient {
         });
       });
     });
-  }
+  };
 }
 
 export const vectorServiceClient = new VectorServiceClient();

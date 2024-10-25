@@ -2,3 +2,19 @@ body {
   margin: 0;
   padding: 0;
 }
+
+.flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-sm {
+  gap: 10px;
+}

@@ -32,7 +32,7 @@ export const FileTable: React.FC = () => {
     searchQuery: "",
   });
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["files", tableParams],
     queryFn: () =>
       fetchFiles({
@@ -81,7 +81,7 @@ export const FileTable: React.FC = () => {
       key: "name",
       render: (text: string) => (
         <span className="flex items-center">
-          <FileOutlined className="mr-2" />
+          <FileOutlined style={{ marginRight: 10 }} />
           {text}
         </span>
       ),
@@ -117,7 +117,7 @@ export const FileTable: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-sm">
         <Input
           placeholder="Search files..."
           prefix={<SearchOutlined />}

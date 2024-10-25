@@ -50,7 +50,8 @@ export const deleteFiles = async (fileIds: string[]) => {
   throw new Error("An unknown error occurred");
 };
 
-export const uploadFile = async () => {
+export const uploadFile = async (formData: FormData) => {
+  console.log(formData);
   const session = await auth();
   const email = session?.user?.email;
 

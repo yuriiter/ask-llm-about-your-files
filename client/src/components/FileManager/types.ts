@@ -1,7 +1,6 @@
 export interface FileInfo {
   id: string;
   name: string;
-  icon: string;
-  uploaded: string;
-  size: string;
+  data_uploaded: Date;
+  size: number;
 }

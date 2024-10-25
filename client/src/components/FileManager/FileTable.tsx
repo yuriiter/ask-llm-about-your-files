@@ -11,6 +11,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { debounce } from "lodash";
 import { FileInfo } from "./types";
 import { deleteFiles, fetchFiles } from "@/lib/actions/data";
+import { bytesToHumanReadable, dateToShortHumanReadable } from "@/utils/utils";
 
 interface TableParams {
   pagination: {
@@ -31,7 +32,7 @@ export const FileTable: React.FC = () => {
     searchQuery: "",
   });
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["files", tableParams],
     queryFn: () =>
       fetchFiles({
@@ -89,11 +90,17 @@ export const FileTable: React.FC = () => {
       title: "Date Uploaded",
       dataIndex: "uploaded",
       key: "uploaded",
+      render: (_: any, record: FileInfo) => (
+        <span>{dateToShortHumanReadable(record.data_uploaded)}</span>
+      ),
     },
     {
       title: "Size",
       dataIndex: "size",
       key: "size",
+      render: (_: any, record: FileInfo) => (
+        <span>{bytesToHumanReadable(record.size)}</span>
+      ),
     },
     {
       title: "Actions",
@@ -138,12 +145,12 @@ export const FileTable: React.FC = () => {
 
       <Table
         columns={columns}
-        dataSource={data?.files}
+        dataSource={data?.files ?? []}
         rowKey="id"
         rowSelection={rowSelection}
         pagination={{
           ...tableParams.pagination,
-          total: data?.total,
+          total: data?.totalCount ?? 0,
         }}
         loading={isLoading}
         onChange={handleTableChange}

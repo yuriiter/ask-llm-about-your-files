@@ -35,7 +35,7 @@ export default function SignInPage() {
           <Card>
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
               <div style={{ textAlign: "center" }}>
-                <Title level={2}>Welcome back</Title>
+                <Title level={2}>Welcome</Title>
                 <Text type="secondary">Please sign in to continue</Text>
               </div>
 

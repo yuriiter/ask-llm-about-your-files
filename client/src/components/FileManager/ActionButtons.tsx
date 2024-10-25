@@ -9,10 +9,12 @@ import {
 } from "@ant-design/icons";
 import { RcFile, UploadProps } from "antd/es/upload";
 import { uploadFile } from "@/lib/actions/data";
+import { useQueryClient } from "@tanstack/react-query";
 
 const { Dragger } = Upload;
 
 export const ActionButtons = () => {
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [fileList, setFileList] = useState<RcFile[]>([]);
@@ -29,12 +31,12 @@ export const ActionButtons = () => {
       } else return;
 
       const result = await uploadFile(formData);
+      queryClient.invalidateQueries({ queryKey: ["files"] });
 
       setFileList([]);
       setIsModalOpen(false);
       message.success("File uploaded successfully");
     } catch (error) {
-      console.error("Upload error:", error);
       message.error("Upload failed");
     } finally {
       setUploading(false);

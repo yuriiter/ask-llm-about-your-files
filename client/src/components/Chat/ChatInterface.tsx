@@ -8,9 +8,9 @@ import {
 import { Layout, Input, Button, Typography, Avatar, Card, Spin } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { EmptyState } from "./EmptyState";
-import { Message } from "./types";
-import { AssistantMessage, UserMessage } from "./Message";
+import { MessageComponent } from "./Message";
 import Link from "next/link";
+import { Message } from "./types";
 
 const { Header, Footer, Content } = Layout;
 const { TextArea } = Input;
@@ -94,13 +94,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <EmptyState />
         ) : (
           <div style={{ maxWidth: "1000px", margin: "0 auto", width: "100%" }}>
-            {messages.map((message) =>
-              message.type === "user" ? (
-                <UserMessage key={message.id} content={message.content} />
-              ) : (
-                <AssistantMessage key={message.id} content={message.content} />
-              ),
-            )}
+            {messages.map((message) => (
+              <MessageComponent
+                key={message.id}
+                content={message.content}
+                role={message.type}
+              />
+            ))}
             {isLoading && (
               <div
                 style={{

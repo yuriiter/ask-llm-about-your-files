@@ -10,6 +10,7 @@ import {
 import { RcFile, UploadProps } from "antd/es/upload";
 import { uploadFile } from "@/lib/actions/data";
 import { useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 
 const { Dragger } = Upload;
 
@@ -97,7 +98,9 @@ export const ActionButtons = () => {
           justifyContent: "space-between",
         }}
       >
-        <Button icon={<CommentOutlined />} type="primary" shape="circle" />
+        <Link href="/chat" passHref>
+          <Button icon={<CommentOutlined />} type="primary" shape="circle" />
+        </Link>
         <Space>
           <Button
             icon={<UploadOutlined />}

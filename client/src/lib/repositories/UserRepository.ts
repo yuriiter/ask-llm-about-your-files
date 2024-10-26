@@ -43,7 +43,11 @@ class UserRepository {
     return createdFiles;
   }
 
-  async getFilesByUserEmail(email: string, filters: FileSearchParams) {
+  async getFilesByUserEmail(
+    email: string,
+    filters: FileSearchParams,
+    selectExternalDbId = false,
+  ) {
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -69,6 +73,7 @@ class UserRepository {
         id: true,
         name: true,
         data_uploaded: true,
+        external_db_id: selectExternalDbId,
       },
     });
 

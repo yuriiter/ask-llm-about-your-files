@@ -7,6 +7,8 @@ import { redirectUnauthenticated } from "../redirectUnauthenticated";
 import { userRepository } from "../repositories/UserRepository";
 import { vectorServiceClient } from "@/grpc/client";
 import { Prisma } from "@prisma/client";
+import { ChatMessage, queryLLM } from "../llm";
+import { BadParametersError } from "@/errors/requestErrors";
 
 export const fetchFiles = async ({
   current,
@@ -43,7 +45,8 @@ export const deleteFiles = async (fileIds: string[]) => {
   if (!email) return redirectUnauthenticated();
 
   try {
-    const deleteRequests = fileIds.map(vectorServiceClient.delete);
+    const deleteFile = (id: string) => vectorServiceClient.delete(id);
+    const deleteRequests = fileIds.map(deleteFile);
     await Promise.all(deleteRequests);
 
     const filesDeleteResult =
@@ -51,6 +54,7 @@ export const deleteFiles = async (fileIds: string[]) => {
 
     return filesDeleteResult.count !== 0;
   } catch (e) {
+    console.log(e);
     if (e instanceof UserNotFoundError) redirectUnauthenticated();
   }
   throw new Error("An unknown error occurred");
@@ -77,4 +81,51 @@ export const uploadFile = async (formData: FormData) => {
     }));
 
   return userRepository.uploadFiles(email, filesPayload);
+};
+
+export const getCompletion = async (
+  userQuery: string,
+  fileIds: string[],
+  chatHistory: ChatMessage[],
+) => {
+  const session = await auth();
+  const email = session?.user?.email;
+
+  if (!email) return redirectUnauthenticated();
+
+  try {
+    const userFiles = await userRepository.getFilesByUserEmail(
+      email,
+      {
+        take: 10000,
+      },
+      true,
+    );
+    const userFilesIds = userFiles.files.map(
+      (userFile) => userFile.external_db_id,
+    );
+
+    const someQueriedFileDoesntExist = fileIds.find(
+      (queriedFileId: string) => !userFilesIds.includes(queriedFileId),
+    );
+    if (someQueriedFileDoesntExist)
+      throw new BadParametersError(
+        `User doesn't have a file with id ${someQueriedFileDoesntExist}`,
+      );
+
+    const fileIdsToQuery = fileIds.length > 0 ? fileIds : userFilesIds;
+
+    if (fileIdsToQuery.length === 0)
+      throw new BadParametersError("User doesn't have any files");
+
+    const llmResponse = await queryLLM(userQuery, fileIdsToQuery, chatHistory);
+
+    return llmResponse;
+  } catch (e) {
+    console.log(e);
+    if (e instanceof UserNotFoundError) redirectUnauthenticated();
+  }
+  throw new Error("An unknown error occurred");
+
+  return "";
 };

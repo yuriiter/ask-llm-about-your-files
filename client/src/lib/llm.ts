@@ -1,4 +1,4 @@
-import { vectorServiceClient } from "@/grpc/client";
+import { SearchResult, vectorServiceClient } from "@/grpc/client";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -6,7 +6,7 @@ const openai = new OpenAI({
   baseURL: process.env.LLM_BASE_URL,
 });
 
-interface ChatMessage {
+export interface ChatMessage {
   role: "system" | "user" | "assistant";
   content: string;
 }
@@ -17,11 +17,11 @@ export async function queryLLM(
   chatHistory: ChatMessage[],
 ) {
   const queryGeneration = await openai.chat.completions.create({
-    model: process.env.LLM_HELPER_MODEL_NAME || "gpt-3.5-turbo",
+    model: process.env.LLM_HELPER_MODEL_NAME,
     messages: [
       {
         role: "system",
-        content: `You are an AI specialized in generating semantic search queries. Your task is to generate 7 alternative versions of the user's query that will help find relevant information in a vector database.
+        content: `You are an AI specialized in generating semantic search queries. Your task is to generate 7 alternative versions of the user's query that will help find relevant information in a vector database. User's query might not be relevant at all. It's your task now to find information in vector DB that might help you to give the best reply to the user.
 
 Guidelines for query generation:
 - Create variations that capture different aspects of the same question
@@ -61,16 +61,21 @@ Return only the queries, one per line, without any explanation or numbering.`,
         acc.push(curr);
       }
       return acc;
-    }, [])
+    }, [] as SearchResult[])
     .sort((a, b) => a.distance - b.distance);
 
-  const context = uniqueResults.map((result) => result.content).join("\n");
+  const context = uniqueResults
+    .map(
+      (result) =>
+        `[Citation] File name: ${result.metadata.file_name}\nPage: ${result.metadata.page_number}\nContent: ${result.content}`,
+    )
+    .join("\n");
 
   const finalMessages: ChatMessage[] = [
     {
       role: "system",
       content:
-        "You are a helpful AI assistant. Use the provided context from files and chat history to answer the user's question accurately.",
+        "You are a helpful AI assistant. Use the provided context from files and chat history to answer the user's question accurately. User's query might not be relevant, for your information. If they are relevant, please also include what file you got it from and the page number.",
     },
     {
       role: "system",
@@ -84,7 +89,7 @@ Return only the queries, one per line, without any explanation or numbering.`,
   ];
 
   const completion = await openai.chat.completions.create({
-    model: process.env.LLM_MODEL_NAME || "gpt-3.5-turbo",
+    model: process.env.LLM_MAIN_MODEL_NAME,
     messages: finalMessages,
     temperature: 0.7,
   });

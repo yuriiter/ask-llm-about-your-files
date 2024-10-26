@@ -1,19 +1,19 @@
 import * as grpc from "@grpc/grpc-js";
 import { vector_service } from "./generated/vector_service";
 
-interface FileMetadata {
+export interface FileMetadata {
   fileId: string;
   fileName: string;
   imagesNum: number;
   textChunksNum: number;
 }
 
-interface UploadFileResponse {
+export interface UploadFileResponse {
   message: string;
   result: FileMetadata[];
 }
 
-interface SearchResult {
+export interface SearchResult {
   id: string;
   type: string;
   distance: number;
@@ -22,7 +22,7 @@ interface SearchResult {
   metadata: { [key: string]: string };
 }
 
-interface DeleteResponse {
+export interface DeleteResponse {
   message: string;
   success: boolean;
 }

@@ -1,6 +1,10 @@
 import { Providers } from "@/components/Providers";
 import "@/style/main.css";
 
+export const metadata = {
+  title: "LLM with your files",
+};
+
 export default async function RootLayout({
   children,
 }: {

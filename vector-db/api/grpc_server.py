@@ -93,7 +93,7 @@ class GRPCApp(APIInterface):
             VectorServiceServicer(self.vector_service),
             self.server
         )
-        port = os.getenv('PORT', '5000')
+        port = os.getenv('API_PORT', '5000')
         self.server.add_insecure_port(f'[::]:{port}')
         self.server.start()
         print(f"gRPC server started on port {port}")

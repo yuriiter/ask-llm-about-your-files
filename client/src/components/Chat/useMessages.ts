@@ -7,6 +7,7 @@ const fileIds: string[] = [];
 
 export const useMessages = () => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSendMessage = useCallback(
     async (message: string) => {
@@ -15,11 +16,15 @@ export const useMessages = () => {
         { id: uuid(), type: "user", content: message, timestamp: new Date() },
       ]);
 
+      setIsLoading(true);
+
       const llmMessage = await getCompletion(
         message,
         fileIds,
         messages.map((m) => ({ role: m.type, content: m.content })),
       );
+
+      setIsLoading(false);
 
       if (!llmMessage || llmMessage.length === 0) {
         console.error("No reply from llm");
@@ -42,5 +47,6 @@ export const useMessages = () => {
   return {
     messages,
     onSendMessage,
+    isLoading,
   };
 };

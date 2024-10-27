@@ -5,14 +5,23 @@ import {
   RobotOutlined,
   SendOutlined,
 } from "@ant-design/icons";
-import { Layout, Input, Button, Typography, Avatar, Card, Spin } from "antd";
+import {
+  Layout,
+  Input,
+  Button,
+  Typography,
+  Avatar,
+  Card,
+  Spin,
+  Menu,
+} from "antd";
 import { useEffect, useRef, useState } from "react";
 import { EmptyState } from "./EmptyState";
 import { MessageComponent } from "./Message";
 import Link from "next/link";
 import { Message } from "./types";
 
-const { Header, Footer, Content } = Layout;
+const { Header, Footer, Content, Sider } = Layout;
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 
@@ -52,13 +61,17 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
+  // Mock chat names for the sidebar
+  const chatNames = [
+    "Chat with Alice",
+    "Project Team",
+    "Support Group",
+    "Development Chat",
+    "Family Group",
+  ];
+
   return (
-    <Layout
-      style={{
-        height: "100vh",
-        backgroundColor: "#fff",
-      }}
-    >
+    <Layout style={{ height: "100vh", backgroundColor: "#fff" }}>
       <Header
         style={{
           backgroundColor: "#fff",
@@ -82,105 +95,130 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         </Link>
       </Header>
 
-      <Content
-        style={{
-          padding: "24px",
-          overflowY: "auto",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {messages.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <div style={{ maxWidth: "1000px", margin: "0 auto", width: "100%" }}>
-            {messages.map((message) => (
-              <MessageComponent
-                key={message.id}
-                content={message.content}
-                role={message.type}
-              />
+      <Layout>
+        <Sider
+          width={200}
+          style={{
+            backgroundColor: "#fff",
+            borderRight: "1px solid #f0f0f0",
+            padding: "24px 0",
+          }}
+        >
+          <Menu
+            mode="inline"
+            defaultSelectedKeys={["0"]}
+            style={{ height: "100%", borderRight: 0 }}
+          >
+            {chatNames.map((chatName, index) => (
+              <Menu.Item key={index}>{chatName}</Menu.Item>
             ))}
-            {isLoading && (
+          </Menu>
+        </Sider>
+
+        <Layout>
+          <Content
+            style={{
+              padding: "24px",
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {messages.length === 0 ? (
+              <EmptyState />
+            ) : (
               <div
-                style={{
-                  display: "flex",
-                  gap: "12px",
-                  marginBottom: "24px",
-                }}
+                style={{ maxWidth: "1000px", margin: "0 auto", width: "100%" }}
               >
-                <Avatar
-                  icon={<RobotOutlined />}
-                  style={{ backgroundColor: "#1890ff" }}
-                />
-                <Card
-                  style={{
-                    flex: 1,
-                    borderRadius: "8px",
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "12px",
-                  }}
-                >
-                  <Spin />
-                </Card>
+                {messages.map((message) => (
+                  <MessageComponent
+                    key={message.id}
+                    content={message.content}
+                    role={message.type}
+                  />
+                ))}
+                {isLoading && (
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "12px",
+                      marginBottom: "24px",
+                    }}
+                  >
+                    <Avatar
+                      icon={<RobotOutlined />}
+                      style={{ backgroundColor: "#1890ff" }}
+                    />
+                    <Card
+                      style={{
+                        flex: 1,
+                        borderRadius: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "12px",
+                      }}
+                    >
+                      <Spin />
+                    </Card>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
               </div>
             )}
-            <div ref={messagesEndRef} />
-          </div>
-        )}
-      </Content>
+          </Content>
 
-      <Footer
-        style={{
-          padding: "12px 24px",
-          backgroundColor: "#fff",
-          borderTop: "1px solid #f0f0f0",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1000px",
-            margin: "0 auto",
-            display: "flex",
-            gap: "8px",
-          }}
-        >
-          <TextArea
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyDown={handleKeyPress}
-            placeholder="Type a message..."
-            autoSize={{ minRows: 1, maxRows: 4 }}
+          <Footer
             style={{
-              resize: "none",
-              padding: "8px 12px",
-              borderRadius: "8px",
+              padding: "12px 24px",
+              backgroundColor: "#fff",
+              borderTop: "1px solid #f0f0f0",
             }}
-          />
-          <Button
-            type="primary"
-            icon={<SendOutlined />}
-            onClick={handleSend}
-            disabled={!inputMessage.trim() || isLoading}
-            style={{
-              height: "auto",
-              padding: "8px 16px",
-            }}
-          />
-        </div>
-        <Text
-          type="secondary"
-          style={{
-            display: "block",
-            textAlign: "center",
-            marginTop: "8px",
-            fontSize: "12px",
-          }}
-        >
-          Press Enter to send, Shift + Enter for new line
-        </Text>
-      </Footer>
+          >
+            <div
+              style={{
+                maxWidth: "1000px",
+                margin: "0 auto",
+                display: "flex",
+                gap: "8px",
+              }}
+            >
+              <TextArea
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder="Type a message..."
+                autoSize={{ minRows: 1, maxRows: 4 }}
+                style={{
+                  resize: "none",
+                  padding: "8px 12px",
+                  borderRadius: "8px",
+                }}
+              />
+              <Button
+                type="primary"
+                icon={<SendOutlined />}
+                onClick={handleSend}
+                disabled={!inputMessage.trim() || isLoading}
+                style={{
+                  height: "auto",
+                  padding: "8px 16px",
+                }}
+              />
+            </div>
+            <Text
+              type="secondary"
+              style={{
+                display: "block",
+                textAlign: "center",
+                marginTop: "8px",
+                fontSize: "12px",
+              }}
+            >
+              Press Enter to send, Shift + Enter for new line
+            </Text>
+          </Footer>
+        </Layout>
+      </Layout>
     </Layout>
   );
 };

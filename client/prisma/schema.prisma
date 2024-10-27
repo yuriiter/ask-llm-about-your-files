@@ -18,6 +18,7 @@ model User {
   id    String @id @default(uuid()) @db.Char(57)
   email String @unique
   files File[]
+  chats Chat[]
 }
 
 model File {
@@ -27,4 +28,28 @@ model File {
   name           String   @db.Char(100)
   User           User     @relation(fields: [userId], references: [id])
   userId         String   @db.Char(57)
+}
+
+model Chat {
+  id           String    @id @default(uuid()) @db.Char(57)
+  data_created DateTime  @default(now())
+  name         String    @db.Char(100)
+  messages     Message[]
+  User         User      @relation(fields: [userId], references: [id])
+  userId       String    @db.Char(57)
+  fileIds String[]
+}
+
+model Message {
+  id           String      @id @default(uuid()) @db.Char(57)
+  data_created DateTime    @default(now())
+  content      String      @db.LongText
+  role         MessageRole
+  Chat         Chat       @relation(fields: [chatId], references: [id])
+  chatId       String     @db.Char(57)
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
 }

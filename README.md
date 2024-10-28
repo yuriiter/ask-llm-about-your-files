@@ -2,6 +2,12 @@
 
 A powerful full-stack platform combining intelligent vector search capabilities with a modern web interface. This platform enables semantic search across multiple file types using state-of-the-art ML models, wrapped in a user-friendly interface with modularity and scalability.
 
+![Image 1](description-images/1.png)
+![Image 2](description-images/2.png)
+![Image 3](description-images/3.png)
+![Image 4](description-images/4.png)
+![Image 5](description-images/5.png)
+
 ## 🌟 System Overview
 
 The platform consists of two main microservices:

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"next dev --turbo\" \"npm run db:dev\" ",
     "build": "npm run grpc:generate && npm run prisma:push && next build",
-    "db:dev": "docker-compose up",
+    "db:dev": "docker-compose -f docker-compose.development.yaml up",
     "grpc:generate": "protoc -I=../proto/ --ts_out=src/grpc/generated vector_service.proto",
     "prisma:push": "prisma db push",
     "prisma:generate": "prisma generate",

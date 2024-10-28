@@ -25,9 +25,6 @@ export const FileManager: React.FC = () => {
             <Title level={4} style={{ margin: 0, marginRight: 12 }}>
               Files
             </Title>
-            <a href="#" style={{ marginLeft: "auto" }}>
-              View All
-            </a>
           </div>
           <FileTable />
         </div>

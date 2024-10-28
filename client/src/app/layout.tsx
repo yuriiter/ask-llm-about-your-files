@@ -1,4 +1,5 @@
 import { Providers } from "@/components/Providers";
+import { Toaster } from "react-hot-toast";
 import "@/style/main.css";
 
 export const metadata = {
@@ -13,6 +14,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Toaster position="top-center" />
         <Providers>{children}</Providers>
       </body>
     </html>

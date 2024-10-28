@@ -12,6 +12,8 @@ import { debounce } from "lodash";
 import { FileInfo } from "./types";
 import { deleteFiles, fetchFiles } from "@/lib/actions/data";
 import { dateToShortHumanReadable } from "@/utils/utils";
+import { useDisplayError } from "@/hooks/useDisplayError";
+import toast from "react-hot-toast";
 
 interface TableParams {
   pagination: {
@@ -32,7 +34,7 @@ export const FileTable: React.FC = () => {
     searchQuery: "",
   });
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["files", tableParams],
     queryFn: () =>
       fetchFiles({
@@ -42,12 +44,15 @@ export const FileTable: React.FC = () => {
       }),
   });
 
+  useDisplayError(error, "Error getting the files");
+
   const deleteMutation = useMutation({
     mutationFn: deleteFiles,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] });
       setSelectedRowKeys([]);
     },
+    onError: () => toast.error("Error deleting the files"),
   });
 
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {

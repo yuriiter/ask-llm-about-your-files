@@ -11,6 +11,7 @@ import { RcFile, UploadProps } from "antd/es/upload";
 import { uploadFile } from "@/lib/actions/data";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 const { Dragger } = Upload;
 
@@ -39,6 +40,7 @@ export const ActionButtons = () => {
       message.success("File uploaded successfully");
     } catch (error) {
       message.error("Upload failed");
+      toast.error("Error uploading a file");
     } finally {
       setUploading(false);
     }

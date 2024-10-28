@@ -16,6 +16,14 @@ export async function queryLLM(
   fileIds: string[],
   chatHistory: ChatMessage[],
 ) {
+  if (!process.env.LLM_HELPER_MODEL_NAME || !process.env.LLM_MAIN_MODEL_NAME) {
+    console.error(
+      "Environment variables LLM_HELPER_MODEL_NAME and LLM_MAIN_MODEL_NAME not initialized",
+    );
+    throw new Error(
+      "Environment variables LLM_HELPER_MODEL_NAME and LLM_MAIN_MODEL_NAME not initialized",
+    );
+  }
   const queryGeneration = await openai.chat.completions.create({
     model: process.env.LLM_HELPER_MODEL_NAME,
     messages: [

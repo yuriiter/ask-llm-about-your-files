@@ -10,11 +10,20 @@ const MarkdownComponents: Partial<Components> = {
   p: ({ children }) => <Paragraph>{children}</Paragraph>,
   strong: ({ children }) => <Text strong>{children}</Text>,
   em: ({ children }) => <Text italic>{children}</Text>,
-  code: ({ node, inline, className, children, ...props }) => {
+  code: ({
+    inline,
+    className,
+    children,
+    ...props
+  }: {
+    inline?: boolean;
+    className?: string;
+    children?: React.ReactNode;
+  }) => {
     const match = /language-(\w+)/.exec(className || "");
     return !inline && match ? (
       <SyntaxHighlighter
-        style={tomorrow}
+        style={tomorrow as any} // Explicit type casting to any
         language={match[1]}
         PreTag="div"
         {...props}

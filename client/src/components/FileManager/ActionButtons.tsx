@@ -32,13 +32,13 @@ export const ActionButtons = () => {
         formData.append("file", fileList[0]);
       } else return;
 
-      const result = await uploadFile(formData);
+      await uploadFile(formData);
       queryClient.invalidateQueries({ queryKey: ["files"] });
 
       setFileList([]);
       setIsModalOpen(false);
       message.success("File uploaded successfully");
-    } catch (error) {
+    } catch (_e) {
       message.error("Upload failed");
       toast.error("Error uploading a file");
     } finally {

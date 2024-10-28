@@ -26,7 +26,7 @@ export const useMessages = () => {
           fileIds,
           messages.map((m) => ({ role: m.type, content: m.content })),
         );
-      } catch (e) {
+      } catch (_e) {
         toast.error("Error getting a response");
       } finally {
         setIsLoading(false);

@@ -55,7 +55,7 @@ export const FileTable: React.FC = () => {
     onError: () => toast.error("Error deleting the files"),
   });
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+  const handleTableChange = (pagination: any, _filters: any, _sorter: any) => {
     setTableParams({
       ...tableParams,
       pagination: {

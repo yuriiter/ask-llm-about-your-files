@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { userRepository } from "./lib/repositories/UserRepository";
 
 const config = {
+  trustHost: true,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -11,7 +12,7 @@ const config = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user }) {
       if (!user.email) return false;
       let userFromDB = await userRepository.findByEmail(user.email);
       if (!userFromDB) {
@@ -20,7 +21,7 @@ const config = {
 
       return true;
     },
-    async session({ session, token, user }) {
+    async session({ session }) {
       return session;
     },
   },
